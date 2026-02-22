@@ -1,5 +1,5 @@
 // Bismuth Player - Service Worker for PWA
-const CACHE_NAME = 'bismuth-player-v1';
+const CACHE_NAME = 'bismuth-player-v2';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -8,7 +8,8 @@ const STATIC_ASSETS = [
   './assets/index-pR9io1LO.css',
   './icons/icon-192x192.png',
   './icons/icon-512x512.png',
-  './icons/icon-192x192.svg'
+  './icons/icon-192x192.svg',
+  './placeholder.png'
 ];
 
 // Install event - cache static assets
@@ -55,7 +56,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Skip cross-origin requests
+  // Handle placeholder.png specifically - serve from cache only
+  if (url.pathname.endsWith('/placeholder.png')) {
+    event.respondWith(
+      caches.match('./placeholder.png').then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        return fetch('./placeholder.png');
+      })
+    );
+    return;
+  }
+
+  // Skip cross-origin requests (except for images)
   if (url.origin !== self.location.origin) {
     return;
   }
@@ -96,6 +110,10 @@ self.addEventListener('fetch', (event) => {
           // Return offline fallback if available
           if (request.mode === 'navigate') {
             return caches.match('./index.html');
+          }
+          // Return placeholder for image requests
+          if (request.destination === 'image') {
+            return caches.match('./placeholder.png');
           }
           throw error;
         });

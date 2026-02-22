@@ -1,7 +1,7 @@
 {
   "name": "Bismuth Player",
   "short_name": "Bismuth",
-  "description": "Bismuth Player - 大屏优化版音乐播放器",
+  "description": "Bismuth Player - 大屏优化版影视播放器",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#1a1a2e",
